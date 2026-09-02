@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klik Produk - Portal Berkas Digital</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- React & ReactDOM CDN -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<!-- Babel CDN -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+body { font-family: 'Plus Jakarta Sans', sans-serif; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 selection:bg-emerald-500 selection:text-white">
+
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState } = React;
+
+const COLOR_THEMES = {
+emerald: {
+name: "Hijau Emerald",
+bgHeader: "bg-emerald-950",
+borderHeader: "border-emerald-800",
+primary: "bg-emerald-600 hover:bg-emerald-500 text-white",
+primaryText: "text-emerald-600",
+heroBg: "from-emerald-950 via-emerald-900 to-slate-900",
+cardHover: "hover:border-emerald-500 hover:shadow-emerald-900/10",
+badge: "bg-emerald-100 text-emerald-800 border-emerald-200"
+}
+};
+
+const Icon = ({ name, className = "w-5 h-5" }) => {
+const icons = {
+sparkles: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />,
+book: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />,
+grad: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />,
+video: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />,
+code: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />,
+folder: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />,
+search: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />,
+external: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+};
+return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className={className}>{icons[name] || icons.book}</svg>;
+};
+
+const OWNER_DEFAULT_CONFIG = {
+siteName: "Klik Produk",
+siteSubtext: "Satu Portal untuk Semua Kebutuhan Digital Anda",
+themeKey: "emerald",
+categories: [
+"Semua",
+"Tutorial LYNK.ID",
+"Pendidikan Cerdas",
+"Bundling Produk Digital",
+"Worksheet Anak",
+"Aset Digital Islami",
+"Bonus Produk Digital"
+],
+products: [
+// Tutorial LYNK.ID
+{ id: "p-t1", title: "E-Book LYNK.ID", category: "Tutorial LYNK.ID", buttonLabel: "Buka", fileUrl: "https://drive.google.com/drive/folders/1j0Pq1Bk8Oqh1wa11nhLaVg7UidatC0hh", iconType: "book", iconText: "EBOOK" },
+
+// Pendidikan Cerdas
+{ id: "p-p1", title: "Ilmu Pengetahuan Umum", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fdenigames.netlify.app%2F&sa=D&sntz=1&usg=AOvVaw2SDvtLqeNLXVvqSrC73Tzv", iconType: "grad", iconText: "IPU" },
+{ id: "p-p2", title: "Aneka Permainan Edukatif", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://script.google.com/macros/s/AKfycbxfwjBzEbQdwxRFQbzzk-CVGHjqjIXBji0I5ZqsKTkvgUGDIOSYT_Y93e4CRA_OVI45pQ/exec", iconType: "grad", iconText: "APE" },
+{ id: "p-p3", title: "Edukasi Hewan", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://script.google.com/macros/s/AKfycbzPeFROLq8JDybyYtMkov1ha4ZcrV8zn2ZuSUtFtwtSmNjorJQ3qXDUB2USX7FWtJiE/exec", iconType: "grad", iconText: "EH" },
+{ id: "p-p4", title: "Pilah Sampah", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://script.google.com/macros/s/AKfycbxFizHvhMayLz6kxBpniBRtUj0SbfnClMlaouYBOnc9mjeiSkRSKBovyPnxzJ1Qd4vWtg/exec", iconType: "grad", iconText: "PS" },
+{ id: "p-p5", title: "Belajar Bahasa Inggris", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://script.google.com/macros/s/AKfycbwBnPIGYRc7Uh7-3NRPhrsUzgkv74azLKFBQhZxxjQ700S_nR1FKc_kVrHBLucgqi3j/exec", iconType: "grad", iconText: "BBI" },
+{ id: "p-p6", title: "Edukasi Lingkungan Pinguin", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://script.google.com/macros/s/AKfycby-uz0Wi8JhWpjEexqaLM3fU7n8Mb8imhgBZzKdN5KZgkJFveseZGiEbQoqeyrvYzOJDw/exec", iconType: "grad", iconText: "ELP" },
+{ id: "p-p7", title: "Edukasi Bangun Ruang 3D", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fvisionary-malasada-c84aa1.netlify.app%2F&sa=D&sntz=1&usg=AOvVaw17D49yNlDgGeiSieXoawzh", iconType: "grad", iconText: "3D" },
+{ id: "p-p8", title: "Pencampuran Zat", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fdenibaurak.netlify.app%2F&sa=D&sntz=1&usg=AOvVaw3cRFOn0fzYcNtEtAoxmzcm", iconType: "grad", iconText: "ZAT" },
+{ id: "p-p10", title: "Latihan Matematika 1", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://script.google.com/a/macros/guru.smk.belajar.id/s/AKfycby7VP6hZzuK8t1jC4ZXOcXY3OtT40P-zUsyRrjj2dmWf8lzgTNVH5m0BFPFhYUZ8Pqo/exec", iconType: "grad", iconText: "MATH" },
+{ id: "p-p11", title: "Edukasi Kata dan Bahasa", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://script.google.com/macros/s/AKfycbzfQR9NnowWKgek48jBxA3I3FvV_vaV3C7UuzLK8bXlyrawKw2JK36z4YABdO7tQA47/exec", iconType: "grad", iconText: "EKB" },
+{ id: "p-p12", title: "Pembelajaran Interaktif", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://script.google.com/macros/s/AKfycbxxXUc2ErV1b7Ag2qK9GFtED7LvsDtDYHy5dSTFntpXhY92jR3D_p4biByDARBDB-dV/exec", iconType: "grad", iconText: "PI" },
+{ id: "p-p13", title: "Latihan Soal dan Quiz", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://script.google.com/macros/s/AKfycbys5dYqQ9LZM9NLCFXqiecSwJw5NFQi-tx2BMfnllgexWn7xhz5q3hcFMT2F--kxuZ9/exec", iconType: "grad", iconText: "LSQ" },
+{ id: "p-p14", title: "Latihan Matematika 2", category: "Pendidikan Cerdas", buttonLabel: "Unduh", fileUrl: "https://script.google.com/macros/s/AKfycbxfA3h-2gvyzzDXeLfMTGZb6rcP79bISoe6ta9W0_lONHsAKeW37w46axu69TaTg2Tc/exec", iconType: "grad", iconText: "MATH" },
+{ id: "p-p15", title: "Kumpulan Game IFP", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fs.id%2Fgames_IFP&sa=D&sntz=1&usg=AOvVaw3FlO6e8nkFIff4jOkWyH7v", iconType: "grad", iconText: "IFP" },
+{ id: "p-p16", title: "Balap Jukung (Permainan)", category: "Pendidikan Cerdas", buttonLabel: "Buka", fileUrl: "https://script.google.com/macros/s/AKfycbxrNbvUCn0YB-WFmDzLihD4CZsX1KyJhfe5hU-jF6hLHQbvCdzPkPg8uCOPM1loK7Cr/exec", iconType: "grad", iconText: "BJ" },
+
+// Bundling Produk Digital Cerdas
+{ id: "p-b1", title: "700+ Produk Digital", category: "Bundling Produk Digital", buttonLabel: "Buka", fileUrl: "https://drive.google.com/drive/folders/12YjxWCv7lCdiujT_DTcSn9UdsQwzU3fE", iconType: "folder", iconText: "700+" },
+{ id: "p-b2", title: "500 + Produk Digital", category: "Bundling Produk Digital", buttonLabel: "Buka", fileUrl: "https://drive.google.com/drive/folders/1GfxcKJVgkk0pnYDQ1U1jAdny7Tge4BD8", iconType: "folder", iconText: "500+" },
+
+// Worksheet Anak
+{ id: "p-w1", title: "Video Edukasi Anak", category: "Worksheet Anak", buttonLabel: "Buka", fileUrl: "https://drive.google.com/drive/folders/1KuS240t4eDtu08eNyrs2TxH5dKucwtxz", iconType: "video", iconText: "VIDEO" },
+{ id: "p-w2", title: "Lembar Kerja Anak", category: "Worksheet Anak", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fwww.digitalprodukno1seindonesia.my.id%2Fworksheet&sa=D&sntz=1&usg=AOvVaw0QSDZdBMMNd1uD7A5JJmuJ", iconType: "book", iconText: "LEMBAR" },
+{ id: "p-w3", title: "Kartu Flash", category: "Worksheet Anak", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fwww.digitalprodukno1seindonesia.my.id%2Fflash-card&sa=D&sntz=1&usg=AOvVaw1oGP99YXf5CZuuOOA4w1Te", iconType: "book", iconText: "FLASH" },
+{ id: "p-w4", title: "Kuis Anak SD", category: "Worksheet Anak", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fwww.digitalprodukno1seindonesia.my.id%2Fquiz&sa=D&sntz=1&usg=AOvVaw0iZu9sWvwCMQMP_mJZFwNW", iconType: "book", iconText: "KUIS" },
+{ id: "p-w5", title: "E-book Cerita Hewan", category: "Worksheet Anak", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fgenerasi554%2Fe-book%2Fcerita-hewan&sa=D&sntz=1&usg=AOvVaw2YOywnC_bShNE3n2jtxBKX", iconType: "book", iconText: "CERITA" },
+{ id: "p-w6", title: "39.000 Worksheet Anak", category: "Worksheet Anak", buttonLabel: "Buka", fileUrl: "https://drive.google.com/drive/folders/1szXXdUfoydWG7Dp1eJ4AkH8xwEL7G63W", iconType: "book", iconText: "39K" },
+{ id: "p-w7", title: "Worksheet Coding", category: "Worksheet Anak", buttonLabel: "Buka", fileUrl: "https://track.pstmrk.it/3s/drive.google.com%2Fdrive%2Ffolders%2F1T9HiRIEqW3eHV9UBCPggwsLifhc1ZJEq/3OSl/AVnHAQ/AQ/ee074b52-5446-4948-bdf9-b30950dba2ba/1/LJL9LZisRc", iconType: "book", iconText: "CODING" },
+
+// Aset Digital Islami
+{ id: "p-i1", title: "Waktu Sholat", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fequran.id%2Fshalat&sa=D&sntz=1&usg=AOvVaw0AylK-g2PgK0-uLIaUKR-u", iconType: "book", iconText: "SHOLAT" },
+{ id: "p-i2", title: "Arah Kiblat", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://qiblafinder.withgoogle.com/intl/ms/onboarding", iconType: "book", iconText: "KIBLAT" },
+{ id: "p-i3", title: "Al-Qur'an Digital", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fequran.id%2F&sa=D&sntz=1&usg=AOvVaw00n9den7T1MHpGX8ToNras", iconType: "book", iconText: "AL-QUR'AN" },
+{ id: "p-i4", title: "Dzikir Pagi dan Petang", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fprodukdigitaltemaislami%2Fkumpulan-dzikir-pagi-dan-petang&sa=D&sntz=1&usg=AOvVaw0mCPHvaXXNk-zNDfIUNpSX", iconType: "book", iconText: "DZIKIR" },
+{ id: "p-i5", title: "Hafalan Al-Qur'an", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fmizyan-hafalan-surah%2Fhome&sa=D&sntz=1&usg=AOvVaw3EVYsal_fSvo6yVhCfSe-5", iconType: "book", iconText: "HAFALAN" },
+{ id: "p-i6", title: "Doa Harian", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fequran.id%2Fdoa&sa=D&sntz=1&usg=AOvVaw0bAWBN1z6R7ZwSDjV_IA-E", iconType: "book", iconText: "DOA" },
+{ id: "p-i7", title: "Tasbih Digital", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Ftasbih-mizyan%2Fhome&sa=D&sntz=1&usg=AOvVaw1Gzxkl80hKXuCW0V3JvjL9", iconType: "book", iconText: "TASBIH" },
+{ id: "p-i8", title: "Ceklis Ibadah", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fdigital-produk-termurah-no-1.my.canva.site%2Fibadah-harian&sa=D&sntz=1&usg=AOvVaw3G6Y6UCPhfrq4RQPXeIIBY", iconType: "book", iconText: "CEKLIS" },
+{ id: "p-i9", title: "Latihan Tulis Qur'an", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fmizyan-murojaah%2Fhome&sa=D&sntz=1&usg=AOvVaw1_8vYyCJCe9maAZQgl443h", iconType: "book", iconText: "TULIS" },
+{ id: "p-i10", title: "E-book Tajwid", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fmizyan-tajwid%2Fhome&sa=D&sntz=1&usg=AOvVaw3m2YEF_DKWbIrHGnYvSEwK", iconType: "book", iconText: "TAJWID" },
+{ id: "p-i11", title: "Adab Dalam Islam", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fprodukdigitaltemaislami%2Fadab-dalam-islam&sa=D&sntz=1&usg=AOvVaw2REt4J5pioTp9At10g6JVL", iconType: "book", iconText: "ADAB" },
+{ id: "p-i12", title: "Kisah Nabi dan Rasul", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fgenerasi554%2Fe-book%2Fnabi-nabi&sa=D&sntz=1&usg=AOvVaw0xmZnSOXCHDVpjmKZQ0sLD", iconType: "book", iconText: "NABI" },
+{ id: "p-i13", title: "Permainan Islam", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fequran.id%2Fgame&sa=D&sntz=1&usg=AOvVaw0XKcWht1EoOJ3X1vpQxoCp", iconType: "book", iconText: "GAME" },
+{ id: "p-i14", title: "Tebak Ayat Juz 30", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fmizyan-tebak-ayat%2Fhome&sa=D&sntz=1&usg=AOvVaw2CgmiLdMZ4nZd4bnZTct1l", iconType: "book", iconText: "JUZ30" },
+{ id: "p-i15", title: "Amalan Pembuka Rezeki", category: "Aset Digital Islami", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fprodukdigitaltemaislami%2Famalan-pembuka-rezeki&sa=D&sntz=1&usg=AOvVaw391XPF7I-S--xIY1vNeyw5", iconType: "book", iconText: "REZEKI" },
+
+// Bonus Produk Digital
+{ id: "p-x1", title: "Pembuat Script AI dan VO AI", category: "Bonus Produk Digital", buttonLabel: "Buka", fileUrl: "https://gemini.google.com/share/71487a50d705", iconType: "code", iconText: "AI" },
+{ id: "p-x2", title: "Kitab Digital", category: "Bonus Produk Digital", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fpaket-700-e-book-islami&sa=D&sntz=1&usg=AOvVaw3T26AIlY1A8G23ltdXShnj", iconType: "book", iconText: "KITAB" },
+{ id: "p-x3", title: "Pembuatan Soal Ujian", category: "Bonus Produk Digital", buttonLabel: "Buka", fileUrl: "https://gemini.google.com/share/867599217d97", iconType: "grad", iconText: "UJIAN" },
+{ id: "p-x4", title: "Modul Ajar Satset", category: "Bonus Produk Digital", buttonLabel: "Unduh", fileUrl: "https://gemini.google.com/share/c8de7e4afbb8", iconType: "book", iconText: "MODUL" },
+{ id: "p-x5", title: "Game Asah Otak", category: "Bonus Produk Digital", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fwww.digitalprodukno1seindonesia.my.id%2Fgame-edukasi&sa=D&sntz=1&usg=AOvVaw0CWs_Db32E1Zql3DSra9eX", iconType: "book", iconText: "GAME" },
+{ id: "p-x6", title: "Bank Konten", category: "Bonus Produk Digital", buttonLabel: "Buka", fileUrl: "https://drive.google.com/drive/folders/1IUoDXxXkqXLuln_I73YiwPOYwh1vy4jJ", iconType: "book", iconText: "KONTEN" },
+{ id: "p-x7", title: "Diet Kalkuator", category: "Bonus Produk Digital", buttonLabel: "Buka", fileUrl: "https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fmizyan-kalkulator-diet%2Fhome&sa=D&sntz=1&usg=AOvVaw0hdh2IibC1fnv6gh6mc7e6", iconType: "book", iconText: "DIET" },
+{ id: "p-x8", title: "Pembuat Poster UMKM AI", category: "Bonus Produk Digital", buttonLabel: "Buka", fileUrl: "https://gemini.google.com/share/db3f98c50411", iconType: "book", iconText: "POSTER" },
+{ id: "p-x9", title: "Ebook", category: "Bonus Produk Digital", buttonLabel: "Unduh", fileUrl: "https://drive.google.com/drive/folders/1fI-60KXBuLHjaNn1ORuA2yYxVXxsiqty", iconType: "book", iconText: "EBOOK" }
+]
+};
+
+function App() {
+const [siteName] = useState(OWNER_DEFAULT_CONFIG.siteName);
+const [siteSubtext] = useState(OWNER_DEFAULT_CONFIG.siteSubtext);
+const [currentThemeKey] = useState(OWNER_DEFAULT_CONFIG.themeKey);
+const [categories] = useState(OWNER_DEFAULT_CONFIG.categories);
+const [products] = useState(OWNER_DEFAULT_CONFIG.products);
+
+const [activeCategory, setActiveCategory] = useState("Semua");
+const [searchQuery, setSearchQuery] = useState("");
+
+const theme = COLOR_THEMES[currentThemeKey] || COLOR_THEMES.emerald;
+
+const filteredProducts = products.filter(p => {
+const matchesCat = activeCategory === "Semua" || p.category === activeCategory;
+const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
+return matchesCat && matchesSearch;
+});
+
+return (
+<div className="min-h-screen flex flex-col bg-slate-50">
+
+{/* Header Bar */}
+<header className={${theme.bgHeader} text-white border-b ${theme.borderHeader} shadow-md sticky top-0 z-40}>
+<div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+<div className="flex items-center gap-2">
+<Icon name="sparkles" className="w-6 h-6 text-emerald-400" />
+<h1 className="text-lg font-black tracking-tight">{siteName}</h1>
+</div>
+</div>
+</header>
+
+{/* Hero Banner */}
+<section className={bg-gradient-to-b ${theme.heroBg} text-white py-8 px-4 text-center`}>
+<h2 className="text-2xl font-extrabold mb-1">{siteName}</h2>
+<p className="text-xs text-white/80 max-w-md mx-auto mb-4">{siteSubtext}</p>
+
+<div className="max-w-md mx-auto relative">
+<Icon name="search" className="absolute left-3.5 top-2.5 w-4 h-4 text-slate-400" />
+<input
+type="text"
+value={searchQuery}
+onChange={(e) => setSearchQuery(e.target.value)}
+placeholder="Cari berkas digital..."
+className="w-full bg-slate-900/90 text-white pl-10 pr-4 py-2 rounded-xl border border-white/20 text-xs focus:outline-none"
+/>
+</div>
+</section>
+
+{/* Content Body */}
+<main className="max-w-7xl mx-auto px-4 py-6 flex-1 w-full">
+
+{/* Navigasi Kategori */}
+<div className="flex gap-2 overflow-x-auto pb-4 mb-6">
+{categories.map((cat, i) => (
+<button
+key={i}
+onClick={() => setActiveCategory(cat)}
+className={px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition${
+activeCategory === cat ? ${theme.primary} shadow-md: "bg-white text-slate-700 hover:bg-slate-100 border border-slate-200" }}
+{cat}
+</button>
+))}
+</div>
+
+{/* Grid Berkas Minimalis */}
+<h3 className="text-sm font-black text-slate-900 mb-4 tracking-wider uppercase border-b pb-2">
+{activeCategory} ({filteredProducts.length})
+</h3>
+
+<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+{filteredProducts.map(p => (
+<div key={p.id} className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col items-center text-center justify-between relative group">
+
+{/* Icon Frame Bulat Ringkas */}
+<div className="w-20 h-20 rounded-full border-2 border-slate-900 flex flex-col items-center justify-center p-2 mb-3 bg-slate-50">
+<Icon name={p.iconType || "book"} className="w-8 h-8 text-slate-800" />
+<span className="text-[9px] font-black uppercase text-slate-900 truncate max-w-[60px]">
+{p.iconText || "FILE"}
+</span>
+</div>
+
+<h4 className="text-xs font-bold text-slate-900 line-clamp-2 leading-tight mb-3 h-8 flex items-center">
+{p.title}
+</h4>
+
+<a
+href={p.fileUrl || "#"}
+target="_blank"
+rel="noopener noreferrer"
+className={w-full font-bold py-1.5 px-2 rounded-xl text-[11px] flex items-center justify-center gap-1${theme.primary}`}
+<span>{p.buttonLabel || "Unduh"}</span>
+<Icon name="external" className="w-3 h-3" />
+</a>
+
+</div>
+))}
+</div>
+
+</main>
+
+</div>
+);
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
